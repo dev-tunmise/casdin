@@ -114,3 +114,4 @@ export default{async fetch(req,env){E=env;PASS=env.ADMIN_PASSWORD;SECRET=env.SES
  if(!PASS||!SECRET||SECRET.length<24)return new Response('Not configured: set ADMIN_PASSWORD and SESSION_SECRET secrets (24+ chars).',{status:500});
  if((env.ACCESS_MODE||'open')!=='open')return new Response('Only ACCESS_MODE=open is implemented.',{status:500});
  try{return await handle(req)}catch(x){console.error(x);return new Response('Something went wrong.',{status:500})}}};
+  
