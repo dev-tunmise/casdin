@@ -10,3 +10,6 @@ database_id = "93cd3da3-b321-44cd-ad23-087e77fd3ccb"
 
 [assets]
 directory = "./public"
+
+[vars]
+GA_MEASUREMENT_ID = "G-83TR6NMX8K"
