@@ -1,5 +1,6 @@
 import {DISCLAIMER,TAGLINE,FULL_NAME,ABOUT,CREATOR} from './content.js';
 import crypto from 'node:crypto';import {marked} from 'marked';import clean from 'sanitize-html';
+const PAGE_TTL=300; // seconds a visited page is reused on the same device before the browser asks again
 let E={},FC={v:null,t:0},PASS='',SECRET='',DB;
 const db={prepare:q=>({get:async(...a)=>(await DB.prepare(q).bind(...a).first())||undefined,all:async(...a)=>(await DB.prepare(q).bind(...a).all()).results,run:async(...a)=>{const x=await DB.prepare(q).bind(...a).run();return{lastInsertRowid:x.meta.last_row_id}}})};
 // Tiny Express-style router so the handlers below stay simple.
@@ -11,7 +12,13 @@ async function handle(req){const u=new URL(req.url),h=new Headers(),r={query:Obj
   send(b){if(!h.has('Content-Type'))h.set('Content-Type','text/html;charset=utf-8');out=new Response(b,{status:this.c||200,headers:h})},redirect(l){h.set('Location',new URL(l,req.url).href);out=new Response(null,{status:302,headers:h})}};
  for(const x of app.rs){if(out)break;if(x.m==='*'){if(x.pre&&!(u.pathname===x.pre||u.pathname.startsWith(x.pre+'/')))continue;let go=false;await x.h(r,s,()=>{go=true});if(!go)break;continue}
   if(x.m!==req.method)continue;const m=x.re.exec(u.pathname);if(!m)continue;x.keys.forEach((k,i)=>r.params[k]=decodeURIComponent(m[i+1]));await x.h(r,s);break}
- return out||new Response('Not found',{status:404})}
+ out=out||new Response('Not found',{status:404});
+ if(u.pathname.startsWith('/admin')){out.headers.set('Cache-Control','no-store');return out}
+ if(req.method==='GET'&&out.status===200&&(out.headers.get('Content-Type')||'').startsWith('text/html')){
+  const et='"'+crypto.createHash('md5').update(await out.clone().text()).digest('hex')+'"',cc='public, max-age='+PAGE_TTL;
+  if(req.headers.get('if-none-match')===et)return new Response(null,{status:304,headers:{ETag:et,'Cache-Control':cc}});
+  out.headers.set('ETag',et);out.headers.set('Cache-Control',cc)}
+ return out}
 const S=x=>String(x??'').trim(),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const MR=/\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\([\s\S]+?\\\)|\$[^\s$](?:[^\n$]*?[^\s$])?\$/g;
 const md=t=>{const M=[];t=t.replace(MR,m=>(M.push(m),'@@M'+(M.length-1)+'@@'));return clean(marked.parse(t),{allowedTags:clean.defaults.allowedTags.concat(['img','h1','h2','del']),allowedAttributes:{a:['href'],img:['src','alt'],code:['class'],th:['align'],td:['align']},allowedSchemes:['http','https','mailto']}).replace(/@@M(\d+)@@/g,(_,i)=>esc(M[i]))};

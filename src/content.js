@@ -5,7 +5,7 @@ export const FULL_NAME = 'Caleb Student Digital Notes';
 export const TAGLINE = 'Your courses. Your notes. One place.';
 
 export const DISCLAIMER =
-  'CASDIN is an independent, student-built learning resource created to help students organise their course materials, revise topics and study at their own pace. It is not an official Caleb University website or service, and it is not affiliated with or endorsed by Caleb University. The project is intended to support students through organised learning materials and clearer explanations.';
+  'CASDIN is an independent, student-built learning resource created to help students organise their course materials, revise topics and study at their own pace. It is not an official Caleb University website or service, and it is not affiliated with or endorsed by Caleb University.';
 
 export const ABOUT = [
   {
@@ -24,7 +24,7 @@ export const CREATOR = {
   h: 'Meet the Creator',
   p: [
     'I’m Oluwatunmise, a Software Engineering student at Caleb University, a web developer, and the founder of Websetly.',
-    'I started learning web development in 2023, and CASDIN is one of the projects Ive built to use my skills to solve a problem I see around me.',
+    'I started learning web development in 2023, and CASDIN is one of the projects I’ve built to use my skills to solve a problem I see around me.',
   ],
   photo: '/creator.jpg',
   alt: 'Photo of the creator of CASDIN',
